@@ -48,6 +48,6 @@ public class CodeEditor extends TextScriptingExtension
     @Override
     public boolean supportFile(File file)
     {
-        return true; //file.getAbsolutePath().endsWith("._");
+        return file.getAbsolutePath().endsWith(".jv");
     }
 }

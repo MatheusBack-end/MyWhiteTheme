@@ -2,11 +2,14 @@ public class CodeStyler extends TextScriptingStyler
 {
     int position = 0;
     String source;
+    String last_token;
+    private String[] keywords = new String[] {"public", "private", "protected", "return", "class", "extends", "if", "this", "continue", "while", "break", "new", "final"};
     
     @Override
     public void execute(String src, TextScriptingTheme theme, List<TextScriptingSyntaxHighlightSpan> highlight_spans)
     {        
         this.source = src;
+        List keywords = Arrays.asList(this.keywords);
         
         highlight_spans.add(create_highlight(new Point2(0, src.length()), CodeTheme.default_color));
         
@@ -20,19 +23,103 @@ public class CodeStyler extends TextScriptingStyler
                 continue;
             }
 
-            if(Character.isDigit(letter.charAt(0)))
+            if(Character.isLetterOrDigit(letter.charAt(0)))
             {
                 int start = position;
+                String value = "";
 
-                while(!Character.isLetterOrDigit(letter.charAt(0)))
+                while(Character.isLetterOrDigit(letter.charAt(0)))
                 {
+                    value += letter;
+                    
                     if(position >= source.length() - 1)
                         break;
 
                     letter = consume_letter();
                 }
-
-                create_highlight(new Point2(start, position + 1), CodeTheme.string_value_color);
+                
+                if(keywords.contains(value))
+                {
+                    highlight_spans.add(create_highlight(new Point2(start, position), theme.keywordColor));
+                    last_token = "keyword";
+                    
+                    continue;
+                }
+                /*
+                
+                if(value.equals("return"))
+                {
+                    highlight_spans.add(create_highlight(new Point2(start, position), theme.keywordColor));
+                    last_token = "return";
+                    
+                    continue;
+                }
+                
+                if(last_token.equals("type"))
+                {
+                    highlight_spans.add(create_highlight(new Point2(start, position), theme.keywordColor));
+                    last_token = "name";
+                   
+                    continue;
+                }
+                
+                if(last_token.equals("keyword"))
+                {
+                    highlight_spans.add(create_highlight(new Point2(start, position), theme.textColor));
+                    last_token = "type";
+                   
+                    continue;
+                }
+                
+                if(last_token.equals("text"))
+                {
+                    highlight_spans.add(create_highlight(new Point2(start, position), theme.keywordColor));
+                    last_token = "variable";
+                   
+                    continue;
+                }*/
+                
+                highlight_spans.add(create_highlight(new Point2(start, position), theme.textColor));
+                //last_token = "text";
+            }
+            
+            if(letter.equals("/"))
+            {
+                int start = position;
+                letter = consume_letter();
+                
+                if(letter.equals("/"))
+                {
+                    while(!letter.equals("\n"))
+                    {
+                       letter = consume_letter();
+                    }
+                    
+                    highlight_spans.add(create_highlight(new Point2(start, position), theme.commentColor));
+                    continue;
+                }
+                
+                if(letter.equals("*"))
+                {
+                    letter = consume_letter();
+                    
+                    while(true)
+                    {
+                        if(letter.equals("*"))
+                        {
+                            letter = consume_letter();
+                            
+                            if(letter.equals("/"))
+                            {
+                                break;
+                            }
+                        }
+                        
+                        letter = consume_letter();
+                    }
+                    
+                    highlight_spans.add(create_highlight(new Point2(start, position), theme.commentColor));
+                }
             }
             
             if(letter.equals("\""))
