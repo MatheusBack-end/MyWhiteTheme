@@ -2,7 +2,6 @@ public class CodeStyler extends TextScriptingStyler
 {
     int position = 0;
     String source;
-    String last_token;
     private String[] keywords = new String[] {"public", "private", "protected", "return", "class", "extends", "if", "this", "continue", "while", "break", "new", "final"};
     
     @Override
@@ -11,7 +10,7 @@ public class CodeStyler extends TextScriptingStyler
         this.source = src;
         List keywords = Arrays.asList(this.keywords);
         
-        highlight_spans.add(create_highlight(new Point2(0, src.length()), CodeTheme.default_color));
+        highlight_spans.add(create_highlight(new Point2(0, src.length()), theme.textColor));
         
         while(position < source.length())
         {
@@ -41,48 +40,13 @@ public class CodeStyler extends TextScriptingStyler
                 if(keywords.contains(value))
                 {
                     highlight_spans.add(create_highlight(new Point2(start, position), theme.keywordColor));
-                    last_token = "keyword";
                     
                     continue;
                 }
-                /*
-                
-                if(value.equals("return"))
-                {
-                    highlight_spans.add(create_highlight(new Point2(start, position), theme.keywordColor));
-                    last_token = "return";
-                    
-                    continue;
-                }
-                
-                if(last_token.equals("type"))
-                {
-                    highlight_spans.add(create_highlight(new Point2(start, position), theme.keywordColor));
-                    last_token = "name";
-                   
-                    continue;
-                }
-                
-                if(last_token.equals("keyword"))
-                {
-                    highlight_spans.add(create_highlight(new Point2(start, position), theme.textColor));
-                    last_token = "type";
-                   
-                    continue;
-                }
-                
-                if(last_token.equals("text"))
-                {
-                    highlight_spans.add(create_highlight(new Point2(start, position), theme.keywordColor));
-                    last_token = "variable";
-                   
-                    continue;
-                }*/
                 
                 highlight_spans.add(create_highlight(new Point2(start, position), theme.textColor));
-                //last_token = "text";
             }
-            
+                        
             if(letter.equals("/"))
             {
                 int start = position;
@@ -115,17 +79,18 @@ public class CodeStyler extends TextScriptingStyler
                             }
                         }
                         
+                        if(position >= source.length() -1)
+                            break;
+                            
                         letter = consume_letter();
                     }
                     
-                    highlight_spans.add(create_highlight(new Point2(start, position), theme.commentColor));
+                    highlight_spans.add(create_highlight(new Point2(start, position + 1), theme.commentColor));
                 }
             }
             
             if(letter.equals("\""))
             {
-                Color color = CodeTheme.string_value_color;
-                
                 int start = position;
                 
                 if(position < source.length() - 1)
@@ -133,7 +98,6 @@ public class CodeStyler extends TextScriptingStyler
                 
                 while(!letter.equals("\""))
                 {
-                    // "\"" string escape
                     if(letter.equals("\\"))
                     {
                         letter = consume_letter();
@@ -148,16 +112,13 @@ public class CodeStyler extends TextScriptingStyler
                     }
                     
                     if(position >= source.length() - 1) break;
-                     
+                    
+                    
                     letter = consume_letter();
                 }
                 
-                if(is_json_key(position + 1))
-                {
-                    color = CodeTheme.string_key_color;
-                }
-                
-                highlight_spans.add(create_highlight(new Point2(start, position + 1), color));
+                highlight_spans.add(create_highlight(new Point2(start, position + 1), theme.stringColor));
+                apply_string_colors(start, position, highlight_spans);
             }
             
             position++;
@@ -166,39 +127,49 @@ public class CodeStyler extends TextScriptingStyler
         position = 0;
     }
     
-    /**
-     * not consumer! 
-     */
-    private boolean is_json_key(int offset)
+    private void apply_string_colors(int offset, int end, List<TextScriptingSyntaxHighlightSpan> highlight_spans)
     {
         String letter = "";
         
-        while(offset < source.length())
+        for(; offset < end; offset++)
         {
-            letter = Character.toString(source.charAt(offset));
-            
-            if((letter.equals(" ")) || (letter.equals("\n")))
+            if(letter.equals("#"))
             {
-                ++offset;
-                continue;
+                int color_start = offset;
+                String color = letter;
+                
+                letter = Character.toString(source.charAt(offset++));
+
+                for(int i = 0; i < 6; i++)
+                {
+                    if(offset > end)
+                        break;
+                        
+                    color += letter;
+                    
+                    letter = Character.toString(source.charAt(offset++));
+                }
+                
+                if(color.length() == 7)
+                {
+                    highlight_spans.add(create_highlight(new Point2(color_start -1, offset -1), new Color(color)));
+                }
             }
             
-            break;            
+            letter = Character.toString(source.charAt(offset));
         }
-        
-        return letter.equals(":");
     }
     
     private TextScriptingSyntaxHighlightSpan create_highlight(Point2 location, Color color)
     {
-        TextScriptingSyntaxHighlightSpan h = new TextScriptingSyntaxHighlightSpan();
-        TextScriptingStyleSpan s = new TextScriptingStyleSpan(null);
-        s.color = color;
-        h.start = location.x;
-        h.end = location.y;
-        h.span = s;
+        TextScriptingSyntaxHighlightSpan highlight = new TextScriptingSyntaxHighlightSpan();
+        TextScriptingStyleSpan span = new TextScriptingStyleSpan(null);
+        span.color = color;
+        highlight.start = location.x;
+        highlight.end = location.y;
+        highlight.span = span;
         
-        return h;
+        return highlight;
     }
     
     private String consume_letter()

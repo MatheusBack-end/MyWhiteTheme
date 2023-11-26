@@ -14,7 +14,7 @@ public class CodeTheme extends TextScriptingTheme
         theme.gutterCurrentLineNumberColor = new Color("#A4A3A3");
         theme.gutterTextColor = new Color("#616366");
         theme.selectedLineColor = new Color("#ffffff");
-        theme.selectionColor = new Color("#28427F");
+        theme.selectionColor = new Color("#66747B");
         theme.suggestionQueryColor = new Color("#987DAC");
         theme.findResultBackgroundColor = new Color("#33654B");
         theme.delimiterBackgroundColor = new Color("#33654B");
@@ -26,7 +26,7 @@ public class CodeTheme extends TextScriptingTheme
         theme.preprocessorColor = new Color("#C9C54E");
         theme.variableColor = new Color("#9378A7");
         theme.methodColor = new Color("#FEC76C");
-        theme.stringColor = new Color("#6E875A");
+        theme.stringColor = new Color("#6B8EC3");
         theme.commentColor = new Color("#66747B");
         theme.tagColor = new Color("#E2C077");
         theme.tagNameColor = new Color("#E2C077");
@@ -38,9 +38,4 @@ public class CodeTheme extends TextScriptingTheme
         
         return theme;
     }
-    
-        
-    public static Color string_value_color = new Color("#6b8ec3"); // "baz": ("foo")
-    public static Color string_key_color = new Color("#dddd00");   // 588152 ("baz"): "foo"
-    public static Color default_color = new Color("#000000");      // ",", ":", "[]", "{}" etc..
 }
