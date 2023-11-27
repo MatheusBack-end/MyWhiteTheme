@@ -2,7 +2,7 @@ public class ThemeLoader
 {
     private boolean is_loaded = false;
     public String path = "Files/WhiteTheme/Assets/theme.json";
-    private JsonBody config;
+    public JsonBody config;
     
     public void load()
     {
