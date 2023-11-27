@@ -1,12 +1,4 @@
-public class MyScript extends Component
+public void start()
 {
-    public void start()
-    {
-        String color = "#ff0000 #000000 yldwys  ye  ygy7 guyg ghvsdd   "
-    }
-    
-    public void repeat()
-    {
-        
-    }
+    return;
 }

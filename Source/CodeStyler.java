@@ -2,13 +2,17 @@ public class CodeStyler extends TextScriptingStyler
 {
     int position = 0;
     String source;
-    private String[] keywords = new String[] {"public", "private", "protected", "return", "class", "extends", "if", "this", "continue", "while", "break", "new", "final"};
+    ThemeLoader theme_config;
+    
+    public CodeStyler(ThemeLoader config)
+    {
+        theme_config = config;
+    }
     
     @Override
     public void execute(String src, TextScriptingTheme theme, List<TextScriptingSyntaxHighlightSpan> highlight_spans)
     {        
         this.source = src;
-        List keywords = Arrays.asList(this.keywords);
         
         highlight_spans.add(create_highlight(new Point2(0, src.length()), theme.textColor));
         
@@ -37,7 +41,7 @@ public class CodeStyler extends TextScriptingStyler
                     letter = consume_letter();
                 }
                 
-                if(keywords.contains(value))
+                if(theme_config.is_keyword(value))
                 {
                     highlight_spans.add(create_highlight(new Point2(start, position), theme.keywordColor));
                     

@@ -1,15 +1,19 @@
-public class CodeTheme extends TextScriptingTheme
-{
+public class CodeTheme
+{   
     public TextScriptingTheme theme;
+    public ThemeLoader config;
     
     public TextScriptingTheme get()
     {
         if(theme == null)
             theme = new TextScriptingTheme();
-            
-        theme.backgroundColor = new Color("#FFFFFF");
+        
+        config = new ThemeLoader();
+        config.load();
+        
+        theme.backgroundColor = config.background_color(); //new Color("#FFFFFF");
         theme.textColor = new Color("#000000");
-        theme.gutterColor = new Color("#2e2e2e");
+        theme.gutterColor = new Color("#FFFFFF");
         theme.gutterDividerColor = new Color("#555555");
         theme.gutterCurrentLineNumberColor = new Color("#A4A3A3");
         theme.gutterTextColor = new Color("#616366");
@@ -17,7 +21,7 @@ public class CodeTheme extends TextScriptingTheme
         theme.selectionColor = new Color("#66747B");
         theme.suggestionQueryColor = new Color("#987DAC");
         theme.findResultBackgroundColor = new Color("#33654B");
-        theme.delimiterBackgroundColor = new Color("#33654B");
+        theme.delimiterBackgroundColor = new Color("#66747B");
         theme.numberColor = new Color("#6897BB");
         theme.operatorColor = new Color("#E8E2B7");
         theme.keywordColor = new Color("#DDDD00");

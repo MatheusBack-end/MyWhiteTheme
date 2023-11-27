@@ -5,8 +5,9 @@ public class CodeEditor extends TextScriptingExtension
     @Override
     public void init()
     {
-        super.setStyler(new CodeStyler());
-        super.setTheme(new CodeTheme().get());
+        CodeTheme theme = new CodeTheme();
+        super.setTheme(theme.get());
+        super.setStyler(new CodeStyler(theme.config));
     }
     
     @Override
@@ -48,6 +49,6 @@ public class CodeEditor extends TextScriptingExtension
     @Override
     public boolean supportFile(File file)
     {
-        return file.getAbsolutePath().endsWith(".jv");
+        return file.getAbsolutePath().endsWith(".jv") || file.getAbsolutePath().endsWith(".json");
     }
 }
