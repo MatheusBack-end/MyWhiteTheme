@@ -1,4 +1,39 @@
-public void start()
+public void start() /* hello */
 {
-    return;
 }
+
+
+public void repeat()
+{
+    myObject.getTransform().rotateInSeconds(new Vector3(0, 0, 0));
+    
+    if(myObject.getTransform().getGlobalPosition().getX() > 10.0f)
+    {
+        myObject.teleportTo(new Vector3(9, 290, 90));
+    }
+    
+    else 
+    {
+        try
+        {
+            new InputDialog("test", new InputDialogListener()
+            {
+                public void onFinish(String input)
+                {
+                    return;
+                }
+                
+                public void onCancel()
+                {
+                    return;
+                }
+            });
+            
+        }
+        
+        catch(Exception e)
+        {
+            
+        }
+    }
+ }

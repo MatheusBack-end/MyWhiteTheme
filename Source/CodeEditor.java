@@ -1,6 +1,7 @@
 public class CodeEditor extends TextScriptingExtension
 {
     private File current_file;
+    private String[] support_files = new String[] {"jv", "MyScript.java", "CodeStyle.java"};
     
     @Override
     public void init()
@@ -49,6 +50,12 @@ public class CodeEditor extends TextScriptingExtension
     @Override
     public boolean supportFile(File file)
     {
-        return file.getAbsolutePath().endsWith(".jv") || file.getAbsolutePath().endsWith(".json");
+        for(String file_type: support_files)
+        {
+            if(file.getAbsolutePath().endsWith(file_type))
+                return true;
+        }
+        
+        return false;
     }
 }

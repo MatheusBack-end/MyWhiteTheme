@@ -1,3 +1,5 @@
+package JAVARuntime;
+
 public class CodeStyler extends TextScriptingStyler
 {
     int position = 0;
@@ -10,18 +12,15 @@ public class CodeStyler extends TextScriptingStyler
     }
     
     @Override
-    public void execute(String src, TextScriptingTheme theme, List<TextScriptingSyntaxHighlightSpan> highlight_spans)
-    {        
+    public void execute(String src, TextScriptingTheme theme, List<TextScriptingSyntaxHighlightSpan> highlight_spans) {        
         this.source = src;
         
         highlight_spans.add(create_highlight(new Point2(0, src.length()), theme.textColor));
         
-        while(position < source.length())
-        {
+        while(position < source.length()) {
             String letter = Character.toString(source.charAt(position));
             
-            if((letter.equals(" ")) || (letter.equals("\n")))
-            {
+            if((letter.equals(" ")) || (letter.equals("\n"))) {
                 position++;
                 continue;
             }
@@ -49,48 +48,6 @@ public class CodeStyler extends TextScriptingStyler
                 }
                 
                 highlight_spans.add(create_highlight(new Point2(start, position), theme.textColor));
-            }
-                        
-            if(letter.equals("/"))
-            {
-                int start = position;
-                letter = consume_letter();
-                
-                if(letter.equals("/"))
-                {
-                    while(!letter.equals("\n"))
-                    {
-                       letter = consume_letter();
-                    }
-                    
-                    highlight_spans.add(create_highlight(new Point2(start, position), theme.commentColor));
-                    continue;
-                }
-                
-                if(letter.equals("*"))
-                {
-                    letter = consume_letter();
-                    
-                    while(true)
-                    {
-                        if(letter.equals("*"))
-                        {
-                            letter = consume_letter();
-                            
-                            if(letter.equals("/"))
-                            {
-                                break;
-                            }
-                        }
-                        
-                        if(position >= source.length() -1)
-                            break;
-                            
-                        letter = consume_letter();
-                    }
-                    
-                    highlight_spans.add(create_highlight(new Point2(start, position + 1), theme.commentColor));
-                }
             }
             
             if(letter.equals("\""))
@@ -124,6 +81,8 @@ public class CodeStyler extends TextScriptingStyler
                 highlight_spans.add(create_highlight(new Point2(start, position + 1), theme.stringColor));
                 apply_string_colors(start, position, highlight_spans);
             }
+            
+            applyComments(theme, highlight_spans);
             
             position++;
         }
@@ -164,6 +123,77 @@ public class CodeStyler extends TextScriptingStyler
         }
     }
     
+    public void applyComments(TextScriptingTheme theme, List<TextScriptingSyntaxHighlightSpan> highlightSpans) {
+        String letter = getCurrentLetter();
+        int start = position;
+        
+        if(Character.isLetterOrDigit(letter.charAt(0)))
+            return;
+            
+        String unk_operator = eatOperators(2, false);
+        if(unk_operator == null)
+            return;
+        
+        if(unk_operator.equals("//")) {
+            eatOperators(2, true);
+            while(!letter.equals("\n")) {
+                letter = consume_letter();
+            }
+            
+            highlightSpans.add(create_highlight(new Point2(start, position), theme.commentColor));
+        }
+            
+        if(unk_operator.equals("/*")) {
+            eatOperators(2, true);
+            while(true) {
+                if(!Character.isLetterOrDigit(letter.charAt(0))) {
+                    if(eatOperators(2, true).equals("*/"))
+                        break;
+                }
+                    
+                if(position >= source.length() - 1)
+                    break;
+                    
+                letter = consume_letter();
+            }
+            
+            highlightSpans.add(create_highlight(new Point2(start, position), theme.commentColor));
+        }
+    }
+    
+    public String eatOperators(int size, boolean consume) {
+        String operator = "";
+        
+        if(position >= source.length())
+            return null;
+        
+        String letter = getCurrentLetter();
+        int count = 0;
+        int offset = position;
+        
+        while(!Character.isLetterOrDigit(letter.charAt(0))) {
+            if(letter.equals(" "))
+                break;
+                
+            if(count >= size)
+                break;
+                    
+            operator += letter;
+            
+            if(position >= source.length() - 1 || offset >= source.length() - 1)
+                break;
+            
+            if(consume)
+                letter = consume_letter();
+            else
+                letter = Character.toString(source.charAt(++offset));
+            
+            count++;
+        }
+        
+        return operator;
+    }
+    
     private TextScriptingSyntaxHighlightSpan create_highlight(Point2 location, Color color)
     {
         TextScriptingSyntaxHighlightSpan highlight = new TextScriptingSyntaxHighlightSpan();
@@ -179,5 +209,9 @@ public class CodeStyler extends TextScriptingStyler
     private String consume_letter()
     {
         return Character.toString(source.charAt(++position));
+    }
+    
+    private String getCurrentLetter() {
+        return Character.toString(source.charAt(position));
     }
 }
