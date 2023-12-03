@@ -1,14 +1,18 @@
 public class CodeEditor extends TextScriptingExtension
 {
     private File current_file;
-    private String[] support_files = new String[] {"jv", "MyScript.java", "CodeStyle.java"};
+    private JsonBody config;
+    private TextScriptingTheme theme;
+    private CodeStyler styler;
+    private boolean isLoad = false;
     
     @Override
     public void init()
     {
-        CodeTheme theme = new CodeTheme();
-        super.setTheme(theme.get());
-        super.setStyler(new CodeStyler(theme.config));
+        load();
+        
+        super.setTheme(theme);
+        super.setStyler(styler);
     }
     
     @Override
@@ -50,12 +54,32 @@ public class CodeEditor extends TextScriptingExtension
     @Override
     public boolean supportFile(File file)
     {
-        for(String file_type: support_files)
+        load();
+        
+        if(this.config == null)
+            return false;
+               
+        for(String file_type: this.config.supportFiles)
         {
             if(file.getAbsolutePath().endsWith(file_type))
                 return true;
         }
         
         return false;
+    }
+    
+    private void load()
+    {
+        if(isLoad)
+            return;
+            
+        CodeTheme codeTheme = new CodeTheme();
+        theme = codeTheme.get();
+        styler = new CodeStyler(codeTheme.config);
+        
+        // TODO: remove rendundance fields
+        config = codeTheme.config.config;
+        
+        isLoad = true;
     }
 }

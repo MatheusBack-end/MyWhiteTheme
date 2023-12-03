@@ -4,18 +4,17 @@ public class CodeStyler extends TextScriptingStyler
 {
     int position = 0;
     String source;
-    ThemeLoader theme_config;
+    ThemeLoader themeConfig;
     
-    public CodeStyler(ThemeLoader config)
-    {
-        theme_config = config;
+    public CodeStyler(ThemeLoader config) {
+        themeConfig = config;
     }
     
     @Override
     public void execute(String src, TextScriptingTheme theme, List<TextScriptingSyntaxHighlightSpan> highlight_spans) {        
         this.source = src;
         
-        highlight_spans.add(create_highlight(new Point2(0, src.length()), theme.textColor));
+        highlight_spans.add(createHighlight(new Point2(0, src.length()), theme.textColor));
         
         while(position < source.length()) {
             String letter = Character.toString(source.charAt(position));
@@ -25,47 +24,40 @@ public class CodeStyler extends TextScriptingStyler
                 continue;
             }
 
-            if(Character.isLetterOrDigit(letter.charAt(0)))
-            {
+            if(Character.isLetterOrDigit(letter.charAt(0))) {
                 int start = position;
                 String value = "";
 
-                while(Character.isLetterOrDigit(letter.charAt(0)))
-                {
+                while(Character.isLetterOrDigit(letter.charAt(0))) {
                     value += letter;
                     
                     if(position >= source.length() - 1)
                         break;
 
-                    letter = consume_letter();
+                    letter = consumeLetter();
                 }
                 
-                if(theme_config.is_keyword(value))
-                {
-                    highlight_spans.add(create_highlight(new Point2(start, position), theme.keywordColor));
+                if(themeConfig.is_keyword(value)) {
+                    highlight_spans.add(createHighlight(new Point2(start, position), theme.keywordColor));
                     
                     continue;
                 }
                 
-                highlight_spans.add(create_highlight(new Point2(start, position), theme.textColor));
+                highlight_spans.add(createHighlight(new Point2(start, position), theme.textColor));
             }
             
-            if(letter.equals("\""))
-            {
+            if(letter.equals("\"")) {
                 int start = position;
                 
                 if(position < source.length() - 1)
-                    letter = consume_letter();
+                    letter = consumeLetter();
                 
-                while(!letter.equals("\""))
-                {
-                    if(letter.equals("\\"))
-                    {
-                        letter = consume_letter();
+                while(!letter.equals("\"")) {
+                    if(letter.equals("\\")) {
+                        letter = consumeLetter();
                         
-                        if(letter.equals("\""))
-                        {
-                            letter = consume_letter();
+                        if(letter.equals("\"")) {
+                            letter = consumeLetter();
                             continue;
                         }
                         
@@ -75,11 +67,11 @@ public class CodeStyler extends TextScriptingStyler
                     if(position >= source.length() - 1) break;
                     
                     
-                    letter = consume_letter();
+                    letter = consumeLetter();
                 }
                 
-                highlight_spans.add(create_highlight(new Point2(start, position + 1), theme.stringColor));
-                apply_string_colors(start, position, highlight_spans);
+                highlight_spans.add(createHighlight(new Point2(start, position + 1), theme.stringColor));
+                applyStringColors(start, position, highlight_spans);
             }
             
             applyComments(theme, highlight_spans);
@@ -90,21 +82,18 @@ public class CodeStyler extends TextScriptingStyler
         position = 0;
     }
     
-    private void apply_string_colors(int offset, int end, List<TextScriptingSyntaxHighlightSpan> highlight_spans)
+    private void applyStringColors(int offset, int end, List<TextScriptingSyntaxHighlightSpan> highlight_spans)
     {
         String letter = "";
         
-        for(; offset < end; offset++)
-        {
-            if(letter.equals("#"))
-            {
+        for(; offset < end; offset++) {
+            if(letter.equals("#")) {
                 int color_start = offset;
                 String color = letter;
                 
                 letter = Character.toString(source.charAt(offset++));
 
-                for(int i = 0; i < 6; i++)
-                {
+                for(int i = 0; i < 6; i++) {
                     if(offset > end)
                         break;
                         
@@ -113,9 +102,8 @@ public class CodeStyler extends TextScriptingStyler
                     letter = Character.toString(source.charAt(offset++));
                 }
                 
-                if(color.length() == 7)
-                {
-                    highlight_spans.add(create_highlight(new Point2(color_start -1, offset -1), new Color(color)));
+                if(color.length() == 7) {
+                    highlight_spans.add(createHighlight(new Point2(color_start -1, offset -1), new Color(color)));
                 }
             }
             
@@ -130,20 +118,20 @@ public class CodeStyler extends TextScriptingStyler
         if(Character.isLetterOrDigit(letter.charAt(0)))
             return;
             
-        String unk_operator = eatOperators(2, false);
-        if(unk_operator == null)
+        String unkOperator = eatOperators(2, false);
+        if(unkOperator == null)
             return;
         
-        if(unk_operator.equals("//")) {
+        if(unkOperator.equals("//")) {
             eatOperators(2, true);
             while(!letter.equals("\n")) {
-                letter = consume_letter();
+                letter = consumeLetter();
             }
             
-            highlightSpans.add(create_highlight(new Point2(start, position), theme.commentColor));
+            highlightSpans.add(createHighlight(new Point2(start, position), theme.commentColor));
         }
             
-        if(unk_operator.equals("/*")) {
+        if(unkOperator.equals("/*")) {
             eatOperators(2, true);
             while(true) {
                 if(!Character.isLetterOrDigit(letter.charAt(0))) {
@@ -154,10 +142,10 @@ public class CodeStyler extends TextScriptingStyler
                 if(position >= source.length() - 1)
                     break;
                     
-                letter = consume_letter();
+                letter = consumeLetter();
             }
             
-            highlightSpans.add(create_highlight(new Point2(start, position), theme.commentColor));
+            highlightSpans.add(createHighlight(new Point2(start, position), theme.commentColor));
         }
     }
     
@@ -184,7 +172,7 @@ public class CodeStyler extends TextScriptingStyler
                 break;
             
             if(consume)
-                letter = consume_letter();
+                letter = consumeLetter();
             else
                 letter = Character.toString(source.charAt(++offset));
             
@@ -194,8 +182,7 @@ public class CodeStyler extends TextScriptingStyler
         return operator;
     }
     
-    private TextScriptingSyntaxHighlightSpan create_highlight(Point2 location, Color color)
-    {
+    private TextScriptingSyntaxHighlightSpan createHighlight(Point2 location, Color color) {
         TextScriptingSyntaxHighlightSpan highlight = new TextScriptingSyntaxHighlightSpan();
         TextScriptingStyleSpan span = new TextScriptingStyleSpan(null);
         span.color = color;
@@ -206,8 +193,7 @@ public class CodeStyler extends TextScriptingStyler
         return highlight;
     }
     
-    private String consume_letter()
-    {
+    private String consumeLetter() {
         return Character.toString(source.charAt(++position));
     }
     

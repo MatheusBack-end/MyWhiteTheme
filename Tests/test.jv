@@ -1,5 +1,13 @@
-public void start() /* hello */
-{
+public void start() {
+    
+}
+
+public void onKeyDown(Key key) {
+    if(key.getName().equals("key event listener")) {
+        Console.log("key is down");
+    }
+    
+    return;
 }
 
 

@@ -1,7 +1,7 @@
 public class ThemeLoader
 {
     private boolean is_loaded = false;
-    public String path = "Files/WhiteTheme/Assets/theme.json";
+    public String path = "Files/WhiteTheme/Assets/Theme.json";
     public JsonBody config;
     
     public void load()

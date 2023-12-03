@@ -1,6 +1,7 @@
 public class JsonBody
 {
     public List<String> keywords = new ArrayList<String>();
+    public List<String> supportFiles = new ArrayList<String>();
     public String backgroundColor;
     public String textColor;
     public String gutterColor;
