@@ -5,13 +5,17 @@ public class CodeStyler extends TextScriptingStyler
     int position = 0;
     String source;
     ThemeLoader themeConfig;
+    List<String> types = new ArrayList<String>();
+    private boolean typesLoaded = false;
     
     public CodeStyler(ThemeLoader config) {
         themeConfig = config;
+        collectNames();
     }
     
     @Override
     public void execute(String src, TextScriptingTheme theme, List<TextScriptingSyntaxHighlightSpan> highlight_spans) {        
+        collectNames();
         this.source = src;
         
         highlight_spans.add(createHighlight(new Point2(0, src.length()), theme.textColor));
@@ -35,6 +39,12 @@ public class CodeStyler extends TextScriptingStyler
                         break;
 
                     letter = consumeLetter();
+                }
+                
+                if(types.contains(value)) {
+                    highlight_spans.add(createHighlight(new Point2(start, position), theme.typeColor));
+                    
+                    continue;
                 }
                 
                 if(themeConfig.is_keyword(value)) {
@@ -199,5 +209,20 @@ public class CodeStyler extends TextScriptingStyler
     
     private String getCurrentLetter() {
         return Character.toString(source.charAt(position));
+    }
+    
+    private void collectNames() {
+        if(JCompiler.isCompiling() || typesLoaded)
+            return;
+        
+        List<JClass> classes = JCompiler.getAllClasses(); 
+        
+        for (int i = 0; i < classes.size(); i++) { 
+            JClass current = (JClass) classes.get(i); 
+            String name = current.getName();
+            types.add(name);
+        }
+        
+        typesLoaded = true; 
     }
 }
