@@ -3,7 +3,7 @@ public void start() {
 }
 
 public void onKeyDown(Key key) {
-    if(key.getName().equals("key event listener")) {
+    if(key.getName().equals("key #ff0000 event listener")) {
         Console.log("key is down");
     }
     
