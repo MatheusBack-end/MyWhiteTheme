@@ -1,6 +1,6 @@
 {
-  "keywords": ["final", "catch", "try", "for", "while", "this", "extends", "break", "class", "public", "private", "protected", "if", "return", "else", "new"],
-  "supportFiles": ["MyScript.java", ".jv", ".json", "KCodeStyler.java"],
+  "keywords": ["final", "catch", "try", "for", "while", "this", "extends", "break", "class", "public", "private", "protected", "if", "return", "else", "new", "package", "continue"],
+  "supportFiles": ["MyScript.java", ".jv", ".json", "KCodeStyler.java", "LTokenizer.java"],
   "backgroundColor": "#FFFFFF",
   "textColor": "#000000",
   "gutterColor": "#FFFFFF",

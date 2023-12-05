@@ -7,6 +7,9 @@ public class CodeStyler extends TextScriptingStyler
     ThemeLoader themeConfig;
     List<String> types = new ArrayList<String>();
     private boolean typesLoaded = false;
+    private Tokenizer tokenizer;
+    int nonBlocking = 0;
+    int nonBlockingLimit = 4000;
     
     public CodeStyler(ThemeLoader config) {
         themeConfig = config;
@@ -14,9 +17,23 @@ public class CodeStyler extends TextScriptingStyler
     }
     
     @Override
-    public void execute(String src, TextScriptingTheme theme, List<TextScriptingSyntaxHighlightSpan> highlight_spans) {        
+    public void execute(String src, TextScriptingTheme theme, List<TextScriptingSyntaxHighlightSpan> highlight_spans) {
+        nonBlocking = 0;
+               
         collectNames();
         this.source = src;
+        
+        tokenizer = new Tokenizer(source);
+        Token currentToken = tokenizer.getNextToken();
+        
+        while(!currentToken.type.equals("eof")) {
+            if(nonBlocking >= nonBlockingLimit)
+                break;
+            
+            Console.log(currentToken.type + " -> " + currentToken.value);
+            currentToken = tokenizer.getNextToken();
+            nonBlocking++;
+        }
         
         highlight_spans.add(createHighlight(new Point2(0, src.length()), theme.textColor));
         
