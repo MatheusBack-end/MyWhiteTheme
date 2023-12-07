@@ -1,16 +1,18 @@
-public class CodeTheme
-{   
+package JAVARuntime;
+
+public class CodeTheme {
+    
     public TextScriptingTheme theme;
     public ThemeLoader config;
     
-    public TextScriptingTheme get()
-    {
+    public TextScriptingTheme get() {
         if(theme == null)
             theme = new TextScriptingTheme();
         
         config = new ThemeLoader();
         config.load();
         
+        // TODO: remove rendundance fields
         JsonBody data = config.config;
         
         theme.backgroundColor = new Color(data.backgroundColor);

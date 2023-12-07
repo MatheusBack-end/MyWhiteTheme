@@ -1,5 +1,7 @@
-public class JsonBody
-{
+package JAVARuntime;
+
+public class JsonBody {
+    
     public List<String> keywords = new ArrayList<String>();
     public List<String> supportFiles = new ArrayList<String>();
     public String backgroundColor;

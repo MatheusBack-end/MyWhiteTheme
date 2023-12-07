@@ -1,3 +1,5 @@
+package JAVARuntime;
+
 public class CodeEditor extends TextScriptingExtension {
     
     private File currentFile;

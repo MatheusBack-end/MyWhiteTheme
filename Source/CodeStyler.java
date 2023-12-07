@@ -13,31 +13,37 @@ public class CodeStyler extends TextScriptingStyler {
     }
     
     @Override
-    public void execute(String source, TextScriptingTheme theme, List<TextScriptingSyntaxHighlightSpan> highlight_spans) {
+    public void execute(String source, TextScriptingTheme theme, List<TextScriptingSyntaxHighlightSpan> highlightSpans) {
         collectNames();
         
-        highlight_spans.add(createHighlight(new Point2(0, source.length()), theme.textColor));
+        highlightSpans.add(createHighlight(new Point2(0, source.length()), theme.textColor));
         
         tokenizer = new Tokenizer(source);
-        Token currentToken = tokenizer.getNextToken();
+        Token token = tokenizer.getNextToken();
         
-        while(!currentToken.type.equals("eof")) {
-            if(currentToken.type.equals("identifier")) {
-                if(themeConfig.is_keyword(currentToken.value)) {
-                    highlight_spans.add(createHighlight(new Point2(currentToken.start, currentToken.end), theme.keywordColor));
+        while(!token.type.equals("eof")) {
+            if(token.type.equals("identifier")) {
+                if(themeConfig.isKeyword(token.value)) {
+                    highlightSpans.add(createHighlight(new Point2(token.start, token.end), theme.keywordColor));
                 }
+                
+                token = tokenizer.getNextToken();
+                continue;
             }
             
-            if(currentToken.type.equals("string")) {
-                 highlight_spans.add(createHighlight(new Point2(currentToken.start, currentToken.end + 1), theme.stringColor));
-                 applyStringColors(currentToken.start, 0, currentToken.value.length(), currentToken.value, highlight_spans);
+            if(token.type.equals("string")) {
+                 highlightSpans.add(createHighlight(new Point2(token.start, token.end + 1), theme.stringColor));
+                 applyStringColors(token.start, 0, token.value.length(), token.value, highlightSpans);
+                 
+                 token = tokenizer.getNextToken();
+                 continue;
             }
             
-            if(currentToken.type.equals("comment")) {
-                highlight_spans.add(createHighlight(new Point2(currentToken.start, currentToken.end), theme.commentColor));
+            if(token.type.equals("comment")) {
+                highlightSpans.add(createHighlight(new Point2(token.start, token.end), theme.commentColor));
             }
             
-            currentToken = tokenizer.getNextToken();
+            token = tokenizer.getNextToken();
         }
     }
     

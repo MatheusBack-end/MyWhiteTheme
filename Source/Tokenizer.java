@@ -163,18 +163,3 @@ public class Tokenizer {
         return Character.toString(text.charAt(position));
     }
 }
-
-class Token {
-    
-    public String type;
-    public String value;
-    public int start;
-    public int end;
-    
-    public Token(String type, String value, int start, int end) {
-        this.type = type;
-        this.value = value;
-        this.start = start;
-        this.end = end;
-    }
-}
