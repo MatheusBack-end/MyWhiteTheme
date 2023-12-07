@@ -1,14 +1,13 @@
-public class CodeEditor extends TextScriptingExtension
-{
-    private File current_file;
+public class CodeEditor extends TextScriptingExtension {
+    
+    private File currentFile;
     private JsonBody config;
     private TextScriptingTheme theme;
     private CodeStyler styler;
     private boolean isLoad = false;
     
     @Override
-    public void init()
-    {
+    public void init() {
         load();
         
         super.setTheme(theme);
@@ -16,35 +15,27 @@ public class CodeEditor extends TextScriptingExtension
     }
     
     @Override
-    public void openScript(File file)
-    {
+    public void openScript(File file) {
         String contents = "";
         
-        try
-        {
+        try {
             contents = FileLoader.loadTextFromFile(file);
         }
-        
-        catch(Exception e)
-        {
+        catch(Exception e) {
             Console.log(e);
         }
         
-        current_file = file;
+        currentFile = file;
         setText(contents);
     }
     
     @Override
-    public boolean saveScript()
-    {
-        try
-        {
-            FileLoader.exportTextToFile(getText(), current_file);
+    public boolean saveScript() {
+        try {
+            FileLoader.exportTextToFile(getText(), currentFile);
             return true;
         }
-        
-        catch(Exception e)
-        {
+        catch(Exception e) {
             Console.log(e);
         }
         
@@ -52,24 +43,21 @@ public class CodeEditor extends TextScriptingExtension
     }
     
     @Override
-    public boolean supportFile(File file)
-    {
+    public boolean supportFile(File file) {
         load();
         
         if(this.config == null)
             return false;
                
-        for(String file_type: this.config.supportFiles)
-        {
-            if(file.getAbsolutePath().endsWith(file_type))
+        for(String fileType: this.config.supportFiles) {
+            if(file.getAbsolutePath().endsWith(fileType))
                 return true;
         }
         
         return false;
     }
     
-    private void load()
-    {
+    private void load() {
         if(isLoad)
             return;
             

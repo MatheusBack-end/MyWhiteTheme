@@ -1,8 +1,7 @@
 package JAVARuntime;
 
-public class CodeStyler extends TextScriptingStyler
-{
-    int position = 0;
+public class CodeStyler extends TextScriptingStyler {
+    
     ThemeLoader themeConfig;
     List<String> types = new ArrayList<String>();
     private boolean typesLoaded = false;
@@ -42,13 +41,12 @@ public class CodeStyler extends TextScriptingStyler
         }
     }
     
-    private void applyStringColors(int offset, int start, int end, String string, List<TextScriptingSyntaxHighlightSpan> highlightSpans)
-    {
+    private void applyStringColors(int offset, int start, int end, String string, List<TextScriptingSyntaxHighlightSpan> highlightSpans) {
         String letter = "";
         
         for(; start < end; start++) {
             if(letter.equals("#")) {
-                int color_start = start;
+                int colorStart = start;
                 String color = letter;
                 
                 letter = Character.toString(string.charAt(start++));
@@ -63,7 +61,7 @@ public class CodeStyler extends TextScriptingStyler
                 }
                 
                 if(color.length() == 7) {
-                    highlightSpans.add(createHighlight(new Point2((color_start + offset) -1, (start + offset)), new Color(color)));
+                    highlightSpans.add(createHighlight(new Point2((colorStart + offset) -1, (start + offset)), new Color(color)));
                 }
             }
             
